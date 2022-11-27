@@ -3,15 +3,13 @@ import java.util.*;
 public class Game {
     Table table = new Table();
     String currentPlayer = "black";
-    String mode = "single";
-    String difficulty;
+    String mode;
 
-    public Game(String mode, String difficulty) {
+    public Game(String mode) {
         this.mode = mode;
-        this.difficulty = difficulty;
     }
 
-    void Play() {
+    int Play() {
         while (table.getNumberOfFilledSquares() < 64) {
             try {
                 makeMove();
@@ -35,6 +33,8 @@ public class Game {
         } else {
             System.out.println("Draw!");
         }
+        System.out.println("\n");
+        return table.getNumberOfBlack();
     }
 
     private void makeMove() throws RuntimeException {
@@ -44,7 +44,7 @@ public class Game {
             throw new RuntimeException();
         } else {
             PairOfPairAndList chosenSquare;
-            if (currentPlayer.equals("white")) {
+            if (mode.equals("single") && currentPlayer.equals("white")) {
                 chosenSquare = robotTurn();
             } else {
                 chosenSquare = personTurn();
@@ -62,7 +62,7 @@ public class Game {
 
     private PairOfPairAndList personTurn() {
         PairOfPairAndList chosenSquare = null;
-        System.out.println("\n\n\n" + table);
+        System.out.println("\n\nХодит " + currentPlayer + ".\n\n" + table);
         printPossibleSquares();
         Pair pair = getCoordinates();
         for (PairOfPairAndList p :
@@ -74,7 +74,7 @@ public class Game {
         return chosenSquare;
     }
 
-    PairOfPairAndList robotTurn(){
+    PairOfPairAndList robotTurn() {
         double rPoints;
         double maxRPoints;
         maxRPoints = 0;
@@ -91,7 +91,8 @@ public class Game {
     }
 
     private void printPossibleSquares() {
-        System.out.println("Координаты клеток, на которые можно совершить ход (отмечены на поле символом ↓):");
+        System.out.println("Координаты клеток, на которые " + currentPlayer +
+                " может совершить ход (отмечены на поле символом ↓):");
         for (PairOfPairAndList p :
                 table.possibleSquares) {
             System.out.println(p.first);
