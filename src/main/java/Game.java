@@ -14,7 +14,7 @@ public class Game {
             try {
                 makeMove();
             } catch (RuntimeException ex) {
-                System.out.println(currentPlayer + " skips a turn");
+                System.out.println(currentPlayer + " пропускает ход.");
                 if (currentPlayer.equals("black")) {
                     currentPlayer = "white";
                 } else {
