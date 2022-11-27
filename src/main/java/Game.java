@@ -12,7 +12,6 @@ public class Game {
     }
 
     void Play() {
-        System.out.println(table);
         while (table.getNumberOfFilledSquares() < 64) {
             try {
                 makeMove();
@@ -39,19 +38,17 @@ public class Game {
     }
 
     private void makeMove() throws RuntimeException {
-
-        List<PairOfPairAndList> possibleSquares;
         double rPoints;
         double maxRPoints;
-        possibleSquares = checkPossibleSquares();
-        if (possibleSquares.isEmpty()) {
+        table.possibleSquares = checkPossibleSquares();
+        if (table.possibleSquares.isEmpty()) {
             throw new RuntimeException();
         } else {
             PairOfPairAndList maxRPair = null;
             if (currentPlayer.equals("white")) {
                 maxRPoints = 0;
                 for (PairOfPairAndList pairOfPairAndList :
-                        possibleSquares) {
+                        table.possibleSquares) {
                     rPoints = R(pairOfPairAndList);
                     if (rPoints > maxRPoints) {
                         maxRPoints = rPoints;
@@ -59,10 +56,11 @@ public class Game {
                     }
                 }
             } else {
-                printPossibleSquares(possibleSquares);
-                Pair pair = getCoordinates(possibleSquares);
+                System.out.println("\n\n\n" + table);
+                printPossibleSquares();
+                Pair pair = getCoordinates();
                 for (PairOfPairAndList p :
-                        possibleSquares) {
+                        table.possibleSquares) {
                     if (p.first.equals(pair)) {
                         maxRPair = p;
                     }
@@ -71,7 +69,8 @@ public class Game {
             assert maxRPair != null;
             changeColor(maxRPair);
         }
-        System.out.println("\n\n\n\n\nИгрок " + currentPlayer + " сделал свой ход:\n\n" + table);
+        table.possibleSquares.clear();
+        System.out.println("\n\n\nИгрок " + currentPlayer + " сделал свой ход:\n\n" + table);
         if (currentPlayer.equals("black")) {
             currentPlayer = "white";
         } else {
@@ -79,16 +78,16 @@ public class Game {
         }
     }
 
-    private void printPossibleSquares(List<PairOfPairAndList> possibleSquares) {
-        System.out.println("Координаты клеток, на которые можно совершить ход:");
+    private void printPossibleSquares() {
+        System.out.println("Координаты клеток, на которые можно совершить ход (отмечены на поле символом ⭳):");
         for (PairOfPairAndList p :
-                possibleSquares) {
+                table.possibleSquares) {
             System.out.println(p.first);
         }
         System.out.println();
     }
 
-    private Pair getCoordinates(List<PairOfPairAndList> possibleSquares) {
+    private Pair getCoordinates() {
         System.out.println("Введите координаты выбранной клетки через пробел:");
         int row = 0;
         int column = 0;
@@ -104,7 +103,7 @@ public class Game {
                 System.out.println("Координаты некорректны. Введите координаты заново:");
                 continue;
             }
-            if (!possibleSquares.contains(new PairOfPairAndList(new Pair(row, column), null))) {
+            if (!table.possibleSquares.contains(new PairOfPairAndList(new Pair(row, column), null))) {
                 isCorrect = false;
                 System.out.println("Ход на эту клетку невозможен. Введите координаты заново:");
             }

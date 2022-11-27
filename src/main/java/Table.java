@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Table {
+    List<PairOfPairAndList> possibleSquares = new ArrayList<>();
     private int numberOfBlack = 2;
     private int numberOfWhite = 2;
 
@@ -66,8 +67,13 @@ public class Table {
             print.append("|_");
             print.append(row).append("_|");
             for (int column = 0; column < 8; ++column) {
-                print.append("_").append(table[row][column] == null ? "_" :
-                        (Objects.equals(table[row][column].color, "black") ? "⭘" : "●")).append("_|");
+                if (table[row][column] == null &&
+                        possibleSquares.contains(new PairOfPairAndList(new Pair(row, column), null))) {
+                    print.append("_").append("⭳").append("_|");
+                } else {
+                    print.append("_").append(table[row][column] == null ? "_" :
+                            (Objects.equals(table[row][column].color, "black") ? "⭘" : "●")).append("_|");
+                }
             }
             print.append('\n');
         }
