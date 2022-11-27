@@ -26,7 +26,7 @@ public class Game {
                 } else {
                     currentPlayer = "black";
                 }
-                List<PairOfPairs> possibleSquares = checkPossibleSquares();
+                List<PairOfPairAndList> possibleSquares = checkPossibleSquares();
                 if (possibleSquares.isEmpty()) {
                     break;
                 }
@@ -43,27 +43,27 @@ public class Game {
 
     private void makeMove() throws RuntimeException {
         System.out.println("\n\n\n\n\n\n" + table);
-        List<PairOfPairs> possibleSquares;
+        List<PairOfPairAndList> possibleSquares;
         double rPoints;
         double maxRPoints;
         possibleSquares = checkPossibleSquares();
         if (possibleSquares.isEmpty()) {
             throw new RuntimeException();
         } else {
-            PairOfPairs maxRPair = null;
+            PairOfPairAndList maxRPair = null;
             if (currentPlayer.equals("white")) {
                 maxRPoints = 0;
-                for (PairOfPairs pairOfPairs :
+                for (PairOfPairAndList pairOfPairAndList :
                         possibleSquares) {
-                    rPoints = R(pairOfPairs);
+                    rPoints = R(pairOfPairAndList);
                     if (rPoints > maxRPoints) {
                         maxRPoints = rPoints;
-                        maxRPair = pairOfPairs;
+                        maxRPair = pairOfPairAndList;
                     }
                 }
             } else {
                 Pair pair = getCoordinates();
-                for (PairOfPairs p :
+                for (PairOfPairAndList p :
                         possibleSquares) {
                     if (p.first.equals(pair)) {
                         maxRPair = p;
@@ -88,32 +88,36 @@ public class Game {
         return new Pair(row, column);
     }
 
-    private void changeColor(PairOfPairs pairOfPairs) {
-        int row = pairOfPairs.second.getFirst();
-        int column = pairOfPairs.second.getSecond();
-        int rowChange = 0;
-        int columnChange = 0;
+    private void changeColor(PairOfPairAndList pairOfPairAndList) {
         int numberOfColored = 0;
+        for (Pair p :
+                pairOfPairAndList.second) {
+            int row = p.getFirst();
+            int column = p.getSecond();
+            int rowChange = 0;
+            int columnChange = 0;
 
-        if (row < pairOfPairs.first.getFirst()) {
-            rowChange = 1;
-        } else if (row > pairOfPairs.first.getFirst()) {
-            rowChange = -1;
-        }
-        if (column < pairOfPairs.first.getSecond()) {
-            columnChange = 1;
-        } else if (column > pairOfPairs.first.getSecond()) {
-            columnChange = -1;
-        }
-        row += rowChange;
-        column += columnChange;
-        while (row != pairOfPairs.first.getFirst() || column != pairOfPairs.first.getSecond()) {
-            table.table[row][column].color = currentPlayer;
-            numberOfColored += 1;
+            if (row < pairOfPairAndList.first.getFirst()) {
+                rowChange = 1;
+            } else if (row > pairOfPairAndList.first.getFirst()) {
+                rowChange = -1;
+            }
+            if (column < pairOfPairAndList.first.getSecond()) {
+                columnChange = 1;
+            } else if (column > pairOfPairAndList.first.getSecond()) {
+                columnChange = -1;
+            }
             row += rowChange;
             column += columnChange;
+            while (row != pairOfPairAndList.first.getFirst() || column != pairOfPairAndList.first.getSecond()) {
+                if (!table.table[row][column].color.equals(currentPlayer)) {
+                    numberOfColored += 1;
+                }
+                table.table[row][column].color = currentPlayer;
+                row += rowChange;
+                column += columnChange;
+            }
         }
-        table.table[pairOfPairs.first.getFirst()][pairOfPairs.first.getSecond()] = new Disk(currentPlayer, row, column);
         if (currentPlayer.equals("black")) {
             table.setNumberOfBlack(table.getNumberOfBlack() + numberOfColored + 1);
             table.setNumberOfWhite(table.getNumberOfWhite() - numberOfColored);
@@ -121,53 +125,58 @@ public class Game {
             table.setNumberOfBlack(table.getNumberOfBlack() - numberOfColored);
             table.setNumberOfWhite(table.getNumberOfWhite() + numberOfColored + 1);
         }
+        table.table[pairOfPairAndList.first.getFirst()][pairOfPairAndList.first.getSecond()] =
+                new Disk(currentPlayer, pairOfPairAndList.first.getFirst(), pairOfPairAndList.first.getSecond());
     }
 
-    private double R(PairOfPairs pairOfPairs) {
+    private double R(PairOfPairAndList pairOfPairAndList) {
         double ss = 0;
         double s;
-        if (pairOfPairs.first.getFirst() == 0 && pairOfPairs.first.getSecond() == 0 ||
-                pairOfPairs.first.getFirst() == 0 && pairOfPairs.first.getSecond() == 7 ||
-                pairOfPairs.first.getFirst() == 7 && pairOfPairs.first.getSecond() == 0 ||
-                pairOfPairs.first.getFirst() == 7 && pairOfPairs.first.getSecond() == 7) {
+        if (pairOfPairAndList.first.getFirst() == 0 && pairOfPairAndList.first.getSecond() == 0 ||
+                pairOfPairAndList.first.getFirst() == 0 && pairOfPairAndList.first.getSecond() == 7 ||
+                pairOfPairAndList.first.getFirst() == 7 && pairOfPairAndList.first.getSecond() == 0 ||
+                pairOfPairAndList.first.getFirst() == 7 && pairOfPairAndList.first.getSecond() == 7) {
             ss = 0.8;
-        } else if (pairOfPairs.first.getFirst() == 0 || pairOfPairs.first.getSecond() == 7 ||
-                pairOfPairs.first.getFirst() == 7 || pairOfPairs.first.getSecond() == 0) {
+        } else if (pairOfPairAndList.first.getFirst() == 0 || pairOfPairAndList.first.getSecond() == 7 ||
+                pairOfPairAndList.first.getFirst() == 7 || pairOfPairAndList.first.getSecond() == 0) {
             ss = 0.4;
         }
+        for (Pair p :
+                pairOfPairAndList.second) {
+            int row = p.getFirst();
+            int column = p.getSecond();
+            int rowChange = 0;
+            int columnChange = 0;
 
-        int row = pairOfPairs.second.getFirst();
-        int column = pairOfPairs.second.getSecond();
-        int rowChange = 0;
-        int columnChange = 0;
-
-        if (row < pairOfPairs.first.getFirst()) {
-            rowChange = 1;
-        } else if (row > pairOfPairs.first.getFirst()) {
-            rowChange = -1;
-        }
-        if (column < pairOfPairs.first.getSecond()) {
-            columnChange = 1;
-        } else if (column > pairOfPairs.first.getSecond()) {
-            columnChange = -1;
-        }
-        row += rowChange;
-        column += columnChange;
-        while (row != pairOfPairs.first.getFirst() || column != pairOfPairs.first.getSecond()) {
-            if (row == 0 || row == 7 || column == 7 || column == 0) {
-                ss += 2;
-            } else {
-                ss += 1;
+            if (row < pairOfPairAndList.first.getFirst()) {
+                rowChange = 1;
+            } else if (row > pairOfPairAndList.first.getFirst()) {
+                rowChange = -1;
+            }
+            if (column < pairOfPairAndList.first.getSecond()) {
+                columnChange = 1;
+            } else if (column > pairOfPairAndList.first.getSecond()) {
+                columnChange = -1;
             }
             row += rowChange;
             column += columnChange;
+            while (row != pairOfPairAndList.first.getFirst() || column != pairOfPairAndList.first.getSecond()) {
+                if (row == 0 || row == 7 || column == 7 || column == 0) {
+                    ss += 2;
+                } else {
+                    ss += 1;
+                }
+                row += rowChange;
+                column += columnChange;
+            }
         }
         return ss;
     }
 
-    List<PairOfPairs> checkPossibleSquares() {
-        List<PairOfPairs> possibleSquares = new ArrayList<>();
+    List<PairOfPairAndList> checkPossibleSquares() {
+        List<PairOfPairAndList> possibleSquares = new ArrayList<>();
         Pair help;
+        int ind = -1;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (table.table[i][j] != null && Objects.equals(table.table[i][j].color, currentPlayer)) {
@@ -176,20 +185,41 @@ public class Game {
                                 !table.table[i - 1][j - 1].color.equals(currentPlayer)) {
                             help = findTopLeftSquare(i, j);
                             if (help.getFirst() != -1 && help.getSecond() != -1) {
-                                possibleSquares.add(new PairOfPairs(help, new Pair(i, j)));
+                                List<Pair> arrList = new ArrayList<>();
+                                ind = possibleSquares.indexOf(new PairOfPairAndList(help, arrList));
+                                if (ind == -1) {
+                                    arrList.add(new Pair(i, j));
+                                    possibleSquares.add(new PairOfPairAndList(help, arrList));
+                                } else {
+                                    possibleSquares.get(ind).second.add(new Pair(i, j));
+                                }
                             }
                         }
                         if (table.table[i - 1][j] != null && !table.table[i - 1][j].color.equals(currentPlayer)) {
                             help = findTopSquare(i, j);
                             if (help.getFirst() != -1 && help.getSecond() != -1) {
-                                possibleSquares.add(new PairOfPairs(help, new Pair(i, j)));
+                                List<Pair> arrList = new ArrayList<>();
+                                ind = possibleSquares.indexOf(new PairOfPairAndList(help, arrList));
+                                if (ind == -1) {
+                                    arrList.add(new Pair(i, j));
+                                    possibleSquares.add(new PairOfPairAndList(help, arrList));
+                                } else {
+                                    possibleSquares.get(ind).second.add(new Pair(i, j));
+                                }
                             }
                         }
                         if (j + 1 <= 7 && table.table[i - 1][j + 1] != null &&
                                 !table.table[i - 1][j + 1].color.equals(currentPlayer)) {
                             help = findTopRightSquare(i, j);
                             if (help.getFirst() != -1 && help.getSecond() != -1) {
-                                possibleSquares.add(new PairOfPairs(help, new Pair(i, j)));
+                                List<Pair> arrList = new ArrayList<>();
+                                ind = possibleSquares.indexOf(new PairOfPairAndList(help, arrList));
+                                if (ind == -1) {
+                                    arrList.add(new Pair(i, j));
+                                    possibleSquares.add(new PairOfPairAndList(help, arrList));
+                                } else {
+                                    possibleSquares.get(ind).second.add(new Pair(i, j));
+                                }
                             }
                         }
                     }
@@ -197,14 +227,28 @@ public class Game {
                             !table.table[i][j - 1].color.equals(currentPlayer)) {
                         help = findLeftSquare(i, j);
                         if (help.getFirst() != -1 && help.getSecond() != -1) {
-                            possibleSquares.add(new PairOfPairs(help, new Pair(i, j)));
+                            List<Pair> arrList = new ArrayList<>();
+                            ind = possibleSquares.indexOf(new PairOfPairAndList(help, arrList));
+                            if (ind == -1) {
+                                arrList.add(new Pair(i, j));
+                                possibleSquares.add(new PairOfPairAndList(help, arrList));
+                            } else {
+                                possibleSquares.get(ind).second.add(new Pair(i, j));
+                            }
                         }
                     }
                     if (j + 1 <= 7 && table.table[i][j + 1] != null &&
                             !table.table[i][j + 1].color.equals(currentPlayer)) {
                         help = findRightSquare(i, j);
                         if (help.getFirst() != -1 && help.getSecond() != -1) {
-                            possibleSquares.add(new PairOfPairs(help, new Pair(i, j)));
+                            List<Pair> arrList = new ArrayList<>();
+                            ind = possibleSquares.indexOf(new PairOfPairAndList(help, arrList));
+                            if (ind == -1) {
+                                arrList.add(new Pair(i, j));
+                                possibleSquares.add(new PairOfPairAndList(help, arrList));
+                            } else {
+                                possibleSquares.get(ind).second.add(new Pair(i, j));
+                            }
                         }
                     }
                     if (i + 1 <= 7) {
@@ -212,20 +256,41 @@ public class Game {
                                 !table.table[i + 1][j - 1].color.equals(currentPlayer)) {
                             help = findBottomLeftSquare(i, j);
                             if (help.getFirst() != -1 && help.getSecond() != -1) {
-                                possibleSquares.add(new PairOfPairs(help, new Pair(i, j)));
+                                List<Pair> arrList = new ArrayList<>();
+                                ind = possibleSquares.indexOf(new PairOfPairAndList(help, arrList));
+                                if (ind == -1) {
+                                    arrList.add(new Pair(i, j));
+                                    possibleSquares.add(new PairOfPairAndList(help, arrList));
+                                } else {
+                                    possibleSquares.get(ind).second.add(new Pair(i, j));
+                                }
                             }
                         }
                         if (table.table[i + 1][j] != null && !table.table[i + 1][j].color.equals(currentPlayer)) {
                             help = findBottomSquare(i, j);
                             if (help.getFirst() != -1 && help.getSecond() != -1) {
-                                possibleSquares.add(new PairOfPairs(help, new Pair(i, j)));
+                                List<Pair> arrList = new ArrayList<>();
+                                ind = possibleSquares.indexOf(new PairOfPairAndList(help, arrList));
+                                if (ind == -1) {
+                                    arrList.add(new Pair(i, j));
+                                    possibleSquares.add(new PairOfPairAndList(help, arrList));
+                                } else {
+                                    possibleSquares.get(ind).second.add(new Pair(i, j));
+                                }
                             }
                         }
                         if (j + 1 <= 7 && table.table[i + 1][j + 1] != null &&
                                 !table.table[i + 1][j + 1].color.equals(currentPlayer)) {
                             help = findBottomRightSquare(i, j);
                             if (help.getFirst() != -1 && help.getSecond() != -1) {
-                                possibleSquares.add(new PairOfPairs(help, new Pair(i, j)));
+                                List<Pair> arrList = new ArrayList<>();
+                                ind = possibleSquares.indexOf(new PairOfPairAndList(help, arrList));
+                                if (ind == -1) {
+                                    arrList.add(new Pair(i, j));
+                                    possibleSquares.add(new PairOfPairAndList(help, arrList));
+                                } else {
+                                    possibleSquares.get(ind).second.add(new Pair(i, j));
+                                }
                             }
                         }
                     }
