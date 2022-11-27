@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
     Table table = new Table();
@@ -62,7 +59,8 @@ public class Game {
                     }
                 }
             } else {
-                Pair pair = getCoordinates();
+                printPossibleSquares(possibleSquares);
+                Pair pair = getCoordinates(possibleSquares);
                 for (PairOfPairAndList p :
                         possibleSquares) {
                     if (p.first.equals(pair)) {
@@ -80,11 +78,36 @@ public class Game {
         }
     }
 
-    private Pair getCoordinates() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("введите координаты");
-        int row = in.nextInt();
-        int column = in.nextInt();
+    private void printPossibleSquares(List<PairOfPairAndList> possibleSquares) {
+        System.out.println("Координаты клеток, на которые можно совершить ход:");
+        for (PairOfPairAndList p :
+                possibleSquares) {
+            System.out.println(p.first);
+        }
+        System.out.println();
+    }
+
+    private Pair getCoordinates(List<PairOfPairAndList> possibleSquares) {
+        System.out.println("Введите координаты выбранной клетки через пробел:");
+        int row = 0;
+        int column = 0;
+        boolean isCorrect;
+        do {
+            isCorrect = true;
+            Scanner in = new Scanner(System.in);
+            try {
+                row = in.nextInt();
+                column = in.nextInt();
+            } catch (RuntimeException ex) {
+                isCorrect = false;
+                System.out.println("Координаты некорректны. Введите координаты заново:");
+                continue;
+            }
+            if(!possibleSquares.contains(new PairOfPairAndList(new Pair(row,column), null))){
+                isCorrect = false;
+                System.out.println("Ход на эту клетку невозможен. Введите координаты заново:");
+            }
+        } while (!isCorrect);
         return new Pair(row, column);
     }
 

@@ -56,7 +56,7 @@ public class Table {
 
     @Override
     public String toString() {
-        StringBuilder print = new StringBuilder("    Black: " + numberOfBlack + "        |       White: " + numberOfWhite);
+        StringBuilder print = new StringBuilder("   Black: " + numberOfBlack + "        |       White: " + numberOfWhite);
         print.append("\n ___________________________________\n|___|");
         for (int column = 0; column < 8; ++column) {
             print.append("_").append(column).append("_|");
