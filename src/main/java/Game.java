@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class Game {
     Table table = new Table();
@@ -14,34 +15,59 @@ public class Game {
     }
 
     void Play() {
-//        List<PairOfPairs> test = checkPossibleSquares();
-//        for (PairOfPairs p :
-//                test) {
-//            System.out.println(p);
-//        }
         int cnt = 0;
         while (table.getNumberOfFilledSquares() < 64) {
-            makeMove();
-            cnt++;
+            try {
+                makeMove();
+            } catch (RuntimeException ex) {
+                System.out.println(currentPlayer + " skips a turn");
+                if (currentPlayer.equals("black")) {
+                    currentPlayer = "white";
+                } else {
+                    currentPlayer = "black";
+                }
+                List<PairOfPairs> possibleSquares = checkPossibleSquares();
+                if (possibleSquares.isEmpty()) {
+                    break;
+                }
+            }
+        }
+        if (table.getNumberOfBlack() > table.getNumberOfWhite()) {
+            System.out.println("Black won!");
+        } else if (table.getNumberOfBlack() < table.getNumberOfWhite()) {
+            System.out.println("White won!");
+        } else {
+            System.out.println("Draw!");
         }
     }
 
-    private void makeMove() {
+    private void makeMove() throws RuntimeException {
+        System.out.println("\n\n\n\n\n\n" + table);
         List<PairOfPairs> possibleSquares;
         double rPoints;
         double maxRPoints;
-        PairOfPairs maxRPair = null;
-        maxRPoints = 0;
         possibleSquares = checkPossibleSquares();
         if (possibleSquares.isEmpty()) {
-            System.out.println(currentPlayer + " skips a turn");
+            throw new RuntimeException();
         } else {
-            for (PairOfPairs pairOfPairs :
-                    possibleSquares) {
-                rPoints = R(pairOfPairs);
-                if (rPoints > maxRPoints) {
-                    maxRPoints = rPoints;
-                    maxRPair = pairOfPairs;
+            PairOfPairs maxRPair = null;
+            if (currentPlayer.equals("white")) {
+                maxRPoints = 0;
+                for (PairOfPairs pairOfPairs :
+                        possibleSquares) {
+                    rPoints = R(pairOfPairs);
+                    if (rPoints > maxRPoints) {
+                        maxRPoints = rPoints;
+                        maxRPair = pairOfPairs;
+                    }
+                }
+            } else {
+                Pair pair = getCoordinates();
+                for (PairOfPairs p :
+                        possibleSquares) {
+                    if (p.first.equals(pair)) {
+                        maxRPair = p;
+                    }
                 }
             }
             changeColor(maxRPair);
@@ -52,6 +78,14 @@ public class Game {
         } else {
             currentPlayer = "black";
         }
+    }
+
+    private Pair getCoordinates() {
+        Scanner in = new Scanner(System.in);
+        System.out.println("введите координаты");
+        int row = in.nextInt();
+        int column = in.nextInt();
+        return new Pair(row, column);
     }
 
     private void changeColor(PairOfPairs pairOfPairs) {
@@ -319,16 +353,5 @@ public class Game {
             --row;
         }
         return new Pair(-1, -1);
-    }
-
-    boolean checkEmptySquares() {
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; j++) {
-                if (table.table[i][j] == null) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }
