@@ -12,7 +12,7 @@ public class Game {
     }
 
     void Play() {
-        int cnt = 0;
+        System.out.println(table);
         while (table.getNumberOfFilledSquares() < 64) {
             try {
                 makeMove();
@@ -39,7 +39,7 @@ public class Game {
     }
 
     private void makeMove() throws RuntimeException {
-        System.out.println("\n\n\n\n\n\n" + table);
+
         List<PairOfPairAndList> possibleSquares;
         double rPoints;
         double maxRPoints;
@@ -68,9 +68,10 @@ public class Game {
                     }
                 }
             }
+            assert maxRPair != null;
             changeColor(maxRPair);
         }
-        System.out.println("\n\n\n\n\n\n" + table);
+        System.out.println("\n\n\n\n\nИгрок " + currentPlayer + " сделал свой ход:\n\n" + table);
         if (currentPlayer.equals("black")) {
             currentPlayer = "white";
         } else {
@@ -103,7 +104,7 @@ public class Game {
                 System.out.println("Координаты некорректны. Введите координаты заново:");
                 continue;
             }
-            if(!possibleSquares.contains(new PairOfPairAndList(new Pair(row,column), null))){
+            if (!possibleSquares.contains(new PairOfPairAndList(new Pair(row, column), null))) {
                 isCorrect = false;
                 System.out.println("Ход на эту клетку невозможен. Введите координаты заново:");
             }
@@ -154,7 +155,6 @@ public class Game {
 
     private double R(PairOfPairAndList pairOfPairAndList) {
         double ss = 0;
-        double s;
         if (pairOfPairAndList.first.getFirst() == 0 && pairOfPairAndList.first.getSecond() == 0 ||
                 pairOfPairAndList.first.getFirst() == 0 && pairOfPairAndList.first.getSecond() == 7 ||
                 pairOfPairAndList.first.getFirst() == 7 && pairOfPairAndList.first.getSecond() == 0 ||
@@ -199,7 +199,7 @@ public class Game {
     List<PairOfPairAndList> checkPossibleSquares() {
         List<PairOfPairAndList> possibleSquares = new ArrayList<>();
         Pair help;
-        int ind = -1;
+        int ind;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (table.table[i][j] != null && Objects.equals(table.table[i][j].color, currentPlayer)) {
