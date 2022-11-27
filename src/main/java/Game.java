@@ -3,7 +3,7 @@ import java.util.*;
 public class Game {
     Table table = new Table();
     String currentPlayer = "black";
-    String mode;
+    String mode = "single";
     String difficulty;
 
     public Game(String mode, String difficulty) {
@@ -38,36 +38,18 @@ public class Game {
     }
 
     private void makeMove() throws RuntimeException {
-        double rPoints;
-        double maxRPoints;
+
         table.possibleSquares = checkPossibleSquares();
         if (table.possibleSquares.isEmpty()) {
             throw new RuntimeException();
         } else {
-            PairOfPairAndList maxRPair = null;
+            PairOfPairAndList chosenSquare;
             if (currentPlayer.equals("white")) {
-                maxRPoints = 0;
-                for (PairOfPairAndList pairOfPairAndList :
-                        table.possibleSquares) {
-                    rPoints = R(pairOfPairAndList);
-                    if (rPoints > maxRPoints) {
-                        maxRPoints = rPoints;
-                        maxRPair = pairOfPairAndList;
-                    }
-                }
+                chosenSquare = robotTurn();
             } else {
-                System.out.println("\n\n\n" + table);
-                printPossibleSquares();
-                Pair pair = getCoordinates();
-                for (PairOfPairAndList p :
-                        table.possibleSquares) {
-                    if (p.first.equals(pair)) {
-                        maxRPair = p;
-                    }
-                }
+                chosenSquare = personTurn();
             }
-            assert maxRPair != null;
-            changeColor(maxRPair);
+            changeColor(chosenSquare);
         }
         table.possibleSquares.clear();
         System.out.println("\n\n\nИгрок " + currentPlayer + " сделал свой ход:\n\n" + table);
@@ -78,8 +60,38 @@ public class Game {
         }
     }
 
+    private PairOfPairAndList personTurn() {
+        PairOfPairAndList chosenSquare = null;
+        System.out.println("\n\n\n" + table);
+        printPossibleSquares();
+        Pair pair = getCoordinates();
+        for (PairOfPairAndList p :
+                table.possibleSquares) {
+            if (p.first.equals(pair)) {
+                chosenSquare = p;
+            }
+        }
+        return chosenSquare;
+    }
+
+    PairOfPairAndList robotTurn(){
+        double rPoints;
+        double maxRPoints;
+        maxRPoints = 0;
+        PairOfPairAndList maxRPair = null;
+        for (PairOfPairAndList pairOfPairAndList :
+                table.possibleSquares) {
+            rPoints = R(pairOfPairAndList);
+            if (rPoints > maxRPoints) {
+                maxRPoints = rPoints;
+                maxRPair = pairOfPairAndList;
+            }
+        }
+        return maxRPair;
+    }
+
     private void printPossibleSquares() {
-        System.out.println("Координаты клеток, на которые можно совершить ход (отмечены на поле символом ⭳):");
+        System.out.println("Координаты клеток, на которые можно совершить ход (отмечены на поле символом ↓):");
         for (PairOfPairAndList p :
                 table.possibleSquares) {
             System.out.println(p.first);

@@ -69,7 +69,7 @@ public class Table {
             for (int column = 0; column < 8; ++column) {
                 if (table[row][column] == null &&
                         possibleSquares.contains(new PairOfPairAndList(new Pair(row, column), null))) {
-                    print.append("_").append("⭳").append("_|");
+                    print.append("_").append("↓").append("_|");
                 } else {
                     print.append("_").append(table[row][column] == null ? "_" :
                             (Objects.equals(table[row][column].color, "black") ? "⭘" : "●")).append("_|");
