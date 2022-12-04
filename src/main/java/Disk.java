@@ -1,11 +1,7 @@
 public class Disk {
-    String color;
-    int column;
-    int row;
+     String color;
 
-    public Disk(String color, int row, int column) {
+    public Disk(String color) {
         this.color = color;
-        this.row = row;
-        this.column = column;
     }
 }

@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class GameMenu {
-    int highestScore = 0;
+    private int highestScore = 0;
 
     void Menu() {
         boolean isCorrect;

@@ -1,9 +1,9 @@
 import java.util.*;
 
 public class Game {
-    Table table = new Table();
-    String currentPlayer = "black";
-    String mode;
+    private final Table table = new Table();
+    private String currentPlayer = "black";
+    private final String mode;
 
     public Game(String mode) {
         this.mode = mode;
@@ -74,7 +74,7 @@ public class Game {
         return chosenSquare;
     }
 
-    PairOfPairAndList robotTurn() {
+    private PairOfPairAndList robotTurn() {
         double rPoints;
         double maxRPoints;
         maxRPoints = 0;
@@ -162,7 +162,7 @@ public class Game {
             table.setNumberOfWhite(table.getNumberOfWhite() + numberOfColored + 1);
         }
         table.table[pairOfPairAndList.first.getFirst()][pairOfPairAndList.first.getSecond()] =
-                new Disk(currentPlayer, pairOfPairAndList.first.getFirst(), pairOfPairAndList.first.getSecond());
+                new Disk(currentPlayer);
     }
 
     private double R(PairOfPairAndList pairOfPairAndList) {
@@ -208,7 +208,7 @@ public class Game {
         return ss;
     }
 
-    List<PairOfPairAndList> checkPossibleSquares() {
+    private List<PairOfPairAndList> checkPossibleSquares() {
         List<PairOfPairAndList> possibleSquares = new ArrayList<>();
         Pair help;
         int ind;
