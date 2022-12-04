@@ -1,20 +1,4 @@
-public class Pair {
-    private final int first;
-
-    private final int second;
-
-    public int getFirst() {
-        return first;
-    }
-
-    public int getSecond() {
-        return second;
-    }
-
-    public Pair(int first, int second) {
-        this.first = first;
-        this.second = second;
-    }
+public record Pair(int first, int second) {
 
     @Override
     public boolean equals(Object obj) {
