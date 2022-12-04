@@ -38,7 +38,6 @@ public class Game {
     }
 
     private void makeMove() throws RuntimeException {
-
         table.possibleSquares = checkPossibleSquares();
         if (table.possibleSquares.isEmpty()) {
             throw new RuntimeException();
