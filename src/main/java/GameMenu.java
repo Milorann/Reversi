@@ -18,12 +18,12 @@ public class GameMenu {
                     choice = in.nextInt();
                 } catch (RuntimeException ex) {
                     isCorrect = false;
-                    System.out.println("Некорректный ввод. Введите 1 или 2.");
+                    System.out.println("Некорректный ввод. Введите 1, 2 или 3.");
                     continue;
                 }
                 if (choice != 1 && choice != 2 && choice != 3) {
                     isCorrect = false;
-                    System.out.println("Некорректный ввод. Введите 1 или 2.");
+                    System.out.println("Некорректный ввод. Введите 1, 2 или 3.");
                 }
             } while (!isCorrect);
             Game g;
